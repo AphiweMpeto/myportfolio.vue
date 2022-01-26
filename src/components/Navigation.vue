@@ -1,5 +1,5 @@
 <template>
-    <header :class="{'scrolled-nav':scrollPosition}">
+    <header :class="{'scrolled-nav':scrolledNav}">
         <nav>
             <div class="brand">
                 <img src="@assets/logo.png" alt="">
@@ -30,18 +30,46 @@
 </template>
 
 <script>
-import Header from '../views/Header.vue'
 export default {
     name:'navigation',
     data() {
         return {
-            scrollPosition: null,
-            mobile: true,
+            scrolledNav: null,
+            mobile: null,
             mobileNav: null,
             windowWidth: null,            
         };
     },
-    components: { Header },
+    created() {
+        window.addEventListener('resize', this.checkScreen);
+    },
+    mounted() {
+        window.addEventListener("scroll", this.updateScroll);
+    },
+    methods: {
+        toggleMobileNav() {
+            this.mobileNav = !this.toggleMobileNav
+        },
+
+        updateScroll(){
+            const scrollposition =window.scrollY;
+            if (scrollPostion > 50) {
+                this.scrolledNav = true;
+                return;
+            }
+            this.scrolledNav = false;
+        },
+
+        checkScreen() {
+            this.windowWidth = window.innerWidth;
+            if (this.windowWidth <= 750) {
+                this.mobile = true;
+                return;
+            }
+            this.mobile = false;
+            this.mobileNav = false;
+        }
+    }
 
 }
 </script>
@@ -93,6 +121,7 @@ header {
                 
             }
         }
+
         .brand{
             display:flex;
             align-items: center;
@@ -101,10 +130,82 @@ header {
                 width: 50px;
                 transition: 0.5s ease all;
             }
-
         }
-    
+
+        .navigation {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .icon {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            right: 24px;
+            height: 100%;
+
+                i {
+                    cursor: pointer;
+                    font-size: 24px;
+                    transition: 0.8s ease all;
+                }
+        }
+
+        .icon-active {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-nav {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            width: 100%;
+            max-width: 250px;
+            height: 100%;
+            background-color: #ffff;
+            top: 0;
+            left: 0;
+
+                li {
+                    margin-left:0;
+                    .link {
+                        color: rgba(0, 0, 0, 0.8);
+                    }
+                }
+        }
+
+    .mobile-nav-enter-active,
+    .mobile-nav-leave-active {
+        transition: 1s ease all;
+    }
+
+    .mobile-nav-enter-from,
+     .mobile-nav-leave-to {
+        transform: translateX(-250px);
+    }
+
+    .mobile-nav-enter-to {
+        transform: translateX(0);
+    }
 
 }
+.scrolled-nav {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(3, 3, 32, 0.8), 0 2px 4px -1px rgba(40, 40, 87, 0.8);
+
+    nav {
+        padding: 8px 0;
+        .brand {
+            img {
+                width: 40px;
+                box-shadow: 0 4px 6px -1px rgba(3, 3, 32, 0.8), 0 2px 4px -1px rgba(40, 40, 87, 0.8);
+            }
+        }
+    }
+}
+
 
 </style>
